@@ -1,47 +1,39 @@
-export default function Page() {
-  return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
-        }}
-      >
-        Your v0 generation will show here.
-      </p>
-    </main>
-  )
+'use client'
+
+import { useMemo, useState } from 'react'
+import { BookOpen, CalendarDays, Check, ChevronRight, Flame, Headphones, Home, LayoutGrid, Moon, Play, Search, Settings, Sparkles, Sun, Trophy, Volume2, X } from 'lucide-react'
+
+type NavItem = { label: string; icon: typeof Home }
+const nav: NavItem[] = [
+  { label: 'Home', icon: Home },
+  { label: 'Study', icon: BookOpen },
+  { label: 'Progress', icon: Trophy },
+  { label: 'Calendar', icon: CalendarDays },
+  { label: 'Browse', icon: LayoutGrid },
+]
+
+const cards = [
+  { jp: 'おはよう', romaji: 'ohayou', en: 'good morning', type: 'Expression', level: 'N5' },
+  { jp: 'ありがとう', romaji: 'arigatou', en: 'thank you', type: 'Expression', level: 'N5' },
+  { jp: '学生', romaji: 'gakusei', en: 'student', type: 'Noun', level: 'N5' },
+  { jp: '食べる', romaji: 'taberu', en: 'to eat', type: 'Verb', level: 'N5' },
+]
+
+function Logo() { return <div className="flex items-center gap-2"><div className="grid size-8 place-items-center rounded-xl bg-primary text-primary-foreground"><Sparkles size={16} /></div><span className="font-mono text-sm font-bold tracking-tight">lingua<span className="text-accent">.</span></span></div> }
+
+function Sidebar({ active, setActive, dark, setDark }: { active: string; setActive: (v: string) => void; dark: boolean; setDark: (v: boolean) => void }) {
+  return <aside className="hidden min-h-screen w-60 shrink-0 flex-col border-r border-border bg-card px-4 py-6 md:flex"><Logo /><div className="mt-10 flex flex-1 flex-col gap-1">{nav.map(({ label, icon: Icon }) => <button key={label} onClick={() => setActive(label)} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${active === label ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}><Icon size={17} />{label}</button>)}<div className="my-5 border-t border-border" /><button onClick={() => setActive('Achievements')} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${active === 'Achievements' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted'}`}><Trophy size={17} />Achievements</button><button onClick={() => setActive('Settings')} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${active === 'Settings' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted'}`}><Settings size={17} />Settings</button></div><div className="rounded-2xl border border-border bg-muted/50 p-3"><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Current course</p><p className="mt-2 text-sm font-semibold">Japanese · JLPT N5</p><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-border"><div className="h-full w-[22%] rounded-full bg-accent" /></div><p className="mt-2 text-xs text-muted-foreground">22% complete</p></div><button onClick={() => setDark(!dark)} className="mt-4 flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">{dark ? <Sun size={16} /> : <Moon size={16} />}{dark ? 'Light mode' : 'Dark mode'}</button></aside>
 }
+
+function Topbar({ active }: { active: string }) { return <header className="flex items-center justify-between border-b border-border px-5 py-4 md:px-8"><div className="flex items-center gap-3 md:hidden"><Logo /></div><div className="hidden md:block"><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Workspace / {active.toLowerCase()}</p><h1 className="mt-1 text-xl font-semibold tracking-tight">{active === 'Home' ? 'Good morning, Narin.' : active}</h1></div><div className="flex items-center gap-3"><button className="hidden rounded-lg border border-border p-2 text-muted-foreground sm:block"><Search size={17} /></button><div className="grid size-8 place-items-center rounded-full bg-accent font-mono text-xs font-bold text-accent-foreground">N</div></div></header> }
+
+function HomeView({ goStudy }: { goStudy: () => void }) { return <div className="space-y-8"><div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="text-sm text-muted-foreground">Tuesday, August 25, 2026</p><h2 className="mt-2 max-w-xl text-3xl font-semibold tracking-tight text-balance md:text-4xl">A little Japanese, every day.</h2><p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">Your daily lesson is ready. Keep your streak alive with just a few focused minutes.</p></div><button onClick={goStudy} className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"><Play size={16} fill="currentColor" /> Start today&apos;s lesson</button></div><div className="grid gap-4 sm:grid-cols-3"><Stat label="Day streak" value="12" detail="Best: 18 days" icon={<Flame size={17} />} /><Stat label="Words learned" value="142" detail="+8 this week" icon={<BookOpen size={17} />} /><Stat label="Study time" value="4h 32m" detail="This month" icon={<Headphones size={17} />} /></div><div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]"><section className="rounded-2xl border border-border bg-card p-5 md:p-6"><div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-widest text-accent">Today&apos;s lesson</p><h3 className="mt-1 text-xl font-semibold">Everyday essentials</h3></div><span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">8 min</span></div><div className="mt-6 flex items-center gap-4"><div className="relative size-20 shrink-0"><svg className="size-full -rotate-90" viewBox="0 0 36 36"><circle className="stroke-border" strokeWidth="3" fill="none" cx="18" cy="18" r="15" /><circle className="stroke-accent" strokeWidth="3" strokeLinecap="round" fill="none" cx="18" cy="18" r="15" strokeDasharray="94" strokeDashoffset="63" /></svg><span className="absolute inset-0 grid place-items-center font-mono text-sm">8/20</span></div><div><p className="text-sm font-medium">You&apos;re off to a good start.</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Review 8 words and learn 12 new ones.</p></div></div><button onClick={goStudy} className="mt-6 flex w-full items-center justify-between rounded-xl bg-muted px-4 py-3 text-sm font-medium transition hover:bg-border">Continue lesson <ChevronRight size={17} /></button></section><section className="rounded-2xl border border-border bg-card p-5 md:p-6"><div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">This week</p><h3 className="mt-1 text-xl font-semibold">Your rhythm</h3></div><span className="text-xs text-accent">7 day goal</span></div><div className="mt-8 flex h-32 items-end justify-between gap-2">{[45,68,35,88,72,56,100].map((h,i)=><div key={i} className="flex flex-1 flex-col items-center gap-2"><div className={`w-full rounded-t-md ${i === 6 ? 'bg-accent' : 'bg-muted-foreground/25'}`} style={{height:`${h}%`}} /><span className="font-mono text-[10px] text-muted-foreground">{['M','T','W','T','F','S','S'][i]}</span></div>)}</div><p className="mt-4 text-xs text-muted-foreground">You&apos;re 3 sessions ahead of last week.</p></section></div><div><div className="mb-4 flex items-center justify-between"><div><h3 className="text-lg font-semibold">Quick review</h3><p className="mt-1 text-sm text-muted-foreground">Words you&apos;re getting close to mastering.</p></div><button onClick={goStudy} className="text-sm font-medium text-accent">View all</button></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{cards.map(c=><div key={c.jp} className="rounded-2xl border border-border bg-card p-4"><div className="flex items-start justify-between"><span className="font-mono text-[10px] uppercase text-muted-foreground">{c.type}</span><span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">{c.level}</span></div><p className="mt-5 text-2xl font-medium">{c.jp}</p><p className="mt-1 text-xs text-muted-foreground">{c.romaji} · {c.en}</p><div className="mt-4 h-1 rounded-full bg-muted"><div className="h-full w-2/3 rounded-full bg-accent" /></div></div>)}</div></div></div> }
+
+function Stat({label,value,detail,icon}:{label:string,value:string,detail:string,icon:React.ReactNode}) { return <div className="rounded-2xl border border-border bg-card p-4"><div className="flex items-center justify-between text-muted-foreground"><span className="text-xs">{label}</span>{icon}</div><p className="mt-3 font-mono text-2xl font-bold tracking-tight">{value}</p><p className="mt-1 text-xs text-muted-foreground">{detail}</p></div> }
+
+function StudyView({ finish }: { finish: () => void }) { const [index,setIndex]=useState(0); const [revealed,setRevealed]=useState(false); const card=cards[index % cards.length]; const answer=(label:string)=>{ if(index>=7) finish(); else { setIndex(index+1); setRevealed(false) } }; return <div className="mx-auto max-w-2xl space-y-6"><div className="flex items-center justify-between"><div><p className="font-mono text-[10px] uppercase tracking-widest text-accent">Daily lesson · Review</p><h2 className="mt-1 text-2xl font-semibold">Everyday essentials</h2></div><span className="font-mono text-sm text-muted-foreground">{index + 1} / 8</span></div><div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-accent transition-all" style={{width:`${((index+1)/8)*100}%`}} /></div><div className="relative flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-border bg-card px-6 text-center shadow-sm"><div className="absolute left-5 top-5 rounded-full bg-muted px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{card.type}</div><button aria-label="Play pronunciation" className="absolute right-5 top-5 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground"><Volume2 size={18} /></button><p className="font-mono text-xs tracking-widest text-muted-foreground">Japanese</p><p className="mt-5 text-6xl font-medium tracking-tight">{card.jp}</p><p className="mt-3 text-base text-muted-foreground">{card.romaji}</p>{revealed && <div className="mt-8 border-t border-border pt-5"><p className="text-xl font-semibold">{card.en}</p><p className="mt-1 text-sm text-muted-foreground">N5 · {card.type}</p></div>}{!revealed && <button onClick={()=>setRevealed(true)} className="mt-10 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">Show answer <span className="ml-2 font-mono text-xs opacity-60">Space</span></button>}</div>{revealed && <div className="grid grid-cols-4 gap-2"><Answer label="Again" interval="1m" onClick={()=>answer('Again')} /><Answer label="Hard" interval="6m" onClick={()=>answer('Hard')} /><Answer label="Good" interval="10m" active onClick={()=>answer('Good')} /><Answer label="Easy" interval="4d" onClick={()=>answer('Easy')} /></div>}<p className="text-center text-xs text-muted-foreground">Keyboard shortcuts: 1–4 to answer · Space to reveal</p></div> }
+function Answer({label,interval,onClick,active=false}:{label:string,interval:string,onClick:()=>void,active?:boolean}) { return <button onClick={onClick} className={`rounded-xl border p-3 text-center transition hover:border-accent ${active ? 'border-accent bg-accent/10' : 'border-border bg-card'}`}><span className="block text-xs font-semibold">{label}</span><span className="mt-1 block font-mono text-[10px] text-muted-foreground">{interval}</span></button> }
+
+function GenericView({ active }: { active:string }) { const titles:Record<string,string>={Progress:'See your growth over time.',Calendar:'Build a study rhythm.',Browse:'Find your next word.',Achievements:'Small wins add up.',Settings:'Make lingua yours.'}; return <div className="space-y-8"><div><p className="text-sm text-muted-foreground">Your learning journey</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">{titles[active] ?? 'Welcome back.'}</h2></div><div className="grid gap-4 md:grid-cols-3"><Stat label="Mastery" value="38%" detail="+6% this month" icon={<Trophy size={17} />} /><Stat label="Words reviewed" value="428" detail="Across 23 sessions" icon={<Check size={17} />} /><Stat label="Consistency" value="86%" detail="Better than 72% of learners" icon={<Flame size={17} />} /></div><section className="rounded-2xl border border-border bg-card p-6"><div className="flex items-center justify-between"><h3 className="text-lg font-semibold">{active === 'Calendar' ? 'August 2026' : active === 'Browse' ? 'Japanese N5 vocabulary' : 'Activity overview'}</h3><CalendarDays size={18} className="text-muted-foreground" /></div><div className="mt-8 grid grid-cols-7 gap-2">{Array.from({length:35},(_,i)=><div key={i} className={`aspect-square rounded-md border border-border ${[3,4,8,9,10,15,16,21,22,27,28,33].includes(i) ? 'bg-accent' : 'bg-muted/40'}`} />)}</div><p className="mt-5 text-sm leading-6 text-muted-foreground">Keep showing up. Your consistency is the strongest predictor of long-term progress.</p></section></div> }
+
+export default function Page(){ const [active,setActive]=useState('Home'); const [dark,setDark]=useState(false); const content=useMemo(()=>active==='Home'?<HomeView goStudy={()=>setActive('Study')} />:active==='Study'?<StudyView finish={()=>setActive('Progress')} />:<GenericView active={active} />, [active]); return <div className={dark?'dark':''}><div className="flex min-h-screen bg-background text-foreground"><Sidebar active={active} setActive={setActive} dark={dark} setDark={setDark} /><main className="min-w-0 flex-1"><Topbar active={active} /><div className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">{content}</div></main><nav className="fixed inset-x-0 bottom-0 z-10 flex justify-around border-t border-border bg-card/95 px-2 py-2 backdrop-blur md:hidden">{nav.slice(0,4).map(({label,icon:Icon})=><button key={label} onClick={()=>setActive(label)} className={`flex flex-col items-center gap-1 px-3 py-1 text-[10px] ${active===label?'text-accent':'text-muted-foreground'}`}><Icon size={18}/>{label}</button>)}</nav></div></div> }
