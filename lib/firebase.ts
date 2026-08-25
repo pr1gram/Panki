@@ -13,10 +13,14 @@ const firebaseConfig = {
 }
 
 export const firebaseConfigured = Object.values(firebaseConfig).every(Boolean)
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export const storage = getStorage(app)
-export { app }
 
-// Add these variables in Vercel Project Settings → Vars for your Firebase project.
+// Keep Firebase client initialization browser-only so Next.js can prerender the shell
+// even when preview/build workers do not receive public project variables.
+const app = typeof window !== 'undefined' && firebaseConfigured
+  ? (getApps().length ? getApp() : initializeApp(firebaseConfig))
+  : null
+
+export const auth = app ? getAuth(app) : null
+export const db = app ? getFirestore(app) : null
+export const storage = app ? getStorage(app) : null
+export { app }
